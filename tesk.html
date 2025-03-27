@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/brands.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/solid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/v4-shims.min.js"></script>
+    <!-- main css -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            background: #1e1e1e;
+            color: white;
+            overflow: hidden;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+            width: -webkit-fill-available;
+            align-items: center;
+            /* height: calc(100% - 54px); */
+        }
+
+        .navbar {
+            background: #292929;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            gap: 10px;
+            width: -webkit-fill-available;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Arial', sans-serif;
+            color: #ffffff;
+            letter-spacing: 1px;
+            /* text-transform: uppercase; */
+            display: inline-block;
+            position: relative;
+        }
+
+        .highlight {
+            background: linear-gradient(45deg, #ff8c00, #ff0080);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        /* .logo::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(45deg, #ff8c00, #ff0080);
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            border-radius: 3px;
+        } */
+
+        .toggle-sidebar {
+            cursor: pointer;
+        }
+
+        .chat-body {
+            height: -webkit-fill-available;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 70%;
+            height: calc(100% - 54px);
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px;
+            scrollbar-width: none;
+            width: calc(100% - 150px);
+        }
+    </style>
+    <!-- sidebar css -->
+    <style>
+        .sidebar {
+            width: 250px;
+            background: #2c2c2c;
+            padding: 20px;
+            transition: .3s;
+            overflow: auto;
+        }
+
+        .sidebar.hidden {
+            /* transform: translateX(-100%); */
+            display: none;
+        }
+
+        .custom-dropdown {
+            position: relative;
+        }
+
+        .custom-dropdown label {
+            display: block;
+            margin: 20px 5px 5px;
+            font-weight: bold;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .dropdown-btn,
+        .dropdown-btn2 {
+            background: #222;
+            color: white;
+            padding: 5px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dropdown-btn2 div {
+            gap: 10px;
+        }
+
+        .dropdown-list,
+        .dropdown-list2 {
+            display: none;
+            position: absolute;
+            width: 100%;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 5px;
+            margin-top: 5px;
+            padding: 0;
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 999;
+        }
+
+        .dropdown-list.show,
+        .dropdown-list2.show {
+            display: block;
+        }
+
+        .dropdown-list li,
+        .dropdown-list2 li {
+            display: flex;
+            /* justify-content: space-between; */
+            padding: 5px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .dropdown-list2 li {
+            gap: 10px;
+        }
+
+        .dropdown-list li:hover,
+        .dropdown-list2 li:hover {
+            background: #444;
+        }
+
+        .part {
+            /* flex: 1; */
+            text-align: center;
+        }
+
+        .part1,
+        .part3 {
+            width: 25%;
+        }
+
+        .pro-badge {
+            background: linear-gradient(45deg, #ff8c00, #ff0080);
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+    <!-- custom token css -->
+    <style>
+        .custom-tokens label {
+            display: block;
+            margin: 20px 5px 10px;
+            font-weight: bold;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .token-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+            width: -webkit-fill-available;
+            height: -webkit-fill-available;
+        }
+
+        .token {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            width: 43%;
+            margin: 0 0 10px;
+            padding: 5px;
+            border-radius: 10px;
+            transition: .3s;
+            border: 1px solid #44444400;
+            /* background-color: #666; */
+        }
+
+        .token:hover {
+            /* background-color: #444; */
+            border: 1px solid;
+            /* width: calc(44% - 2px); */
+            /* padding: 4px; */
+            box-shadow: 0 0 6px 2px #707070;
+            scale: 1.1;
+        }
+
+        .token-img {
+            aspect-ratio: 1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .token-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .token span {
+            color: #aaa;
+        }
+    </style>
+    <!-- chat input css -->
+    <style>
+        .chat-input {
+            display: flex;
+            align-items: flex-end;
+            padding: 0 0 10px 0;
+            width: -webkit-fill-available;
+        }
+
+        .chat-input button,
+        .prompt {
+            padding: 10px;
+            margin: 0 5px 5px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
+
+        .chat-input button {
+            background: #262626;
+            color: white;
+            cursor: pointer;
+            width: 42px;
+            height: 42px;
+            border: 1px solid #444;
+            border-radius: 50%;
+            transition: .3s;
+        }
+
+        .chat-input button:hover {
+            background: #333;
+        }
+
+        .prompt-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #333;
+            border-radius: 20px;
+            margin: 0 5px 5px;
+        }
+
+        .prompt-img {
+            height: 70px;
+            overflow: hidden;
+            display: none;
+            gap: 5px;
+            padding: 5px;
+        }
+
+        .prompt-img div {
+            height: 70px;
+            width: 70px;
+            overflow: hidden;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .prompt-img div img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .attached-img-btn {
+            color: #aaa;
+        }
+
+        .prompt {
+            width: -webkit-fill-available;
+            height: 20px;
+            resize: none;
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 20px;
+            outline: 0;
+            margin: 0;
+        }
+    </style>
+    <!-- chat msg css -->
+    <style>
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin: 10px 0;
+        }
+
+        .chat-message.user {
+            align-items: flex-end;
+        }
+
+        .chat-message.assistant {
+            align-items: flex-end;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+        }
+
+        .chat-message.assistant .buttons button {
+            width: 30px;
+            height: 30px;
+            border: 0;
+            border-radius: 50%;
+            margin-top: 5px;
+            background: #333;
+            color: white;
+            transition: .3s;
+        }
+
+        .chat-message.assistant .buttons button:hover {
+            background: #444;
+        }
+
+        .chat-bubble {
+            max-width: 60%;
+            padding: 10px;
+            border-radius: 10px;
+            background: #4a4a4a;
+            margin: 5px 0;
+        }
+
+        .chat-message .img {
+            width: 300px;
+            height: 300px;
+            border-radius: 10px;
+            border: 1px solid #666;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-message .img img {
+            /* width: 45px;
+            height: 45px; */
+            border-radius: 9px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .att-img {
+            height: 100px;
+            /* margin: 0 5px; */
+            border-radius: 10px 10px 5px 10px;
+            overflow: hidden;
+        }
+    </style>
+    <!-- modal css -->
+    <style>
+        .modal {
+            /* display: flex; */
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            display: contents;
+        }
+
+        .modal-content img {
+            width: auto;
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+        }
+
+        .copy-box {
+            /* display: inline-block; */
+            display: none;
+            background: #303030;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            font-family: monospace;
+            max-width: 40%;
+        }
+
+        .copy-tooltip {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .copy-box:hover .copy-tooltip {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar" id="sidebar">
+        <h3>Image Formate</h3>
+        <div class="custom-dropdown">
+            <label>Aspect Ratio</label>
+            <div class="dropdown-btn" onclick="toggleDropdown()" style="color: #aaa;" data-value="1">
+                <div style="display: flex; width: -webkit-fill-available;">
+                    <span class="part part1">512</span>
+                    <span class="part part2">:</span>
+                    <span class="part part3">512</span>
+                    <span class="part part4"></span>
+                </div>
+                <span>▼</span>
+            </div>
+            <ul class="dropdown-list">
+                <li onclick="selectOption(this)" data-value="1">
+                    <span class="part part1">512</span>
+                    <span class="part part2">:</span>
+                    <span class="part part3">512</span>
+                    <span class="part part4"></span>
+                </li>
+                <li onclick="selectOption(this)" data-value="2">
+                    <span class="part part1">512</span>
+                    <span class="part part2">:</span>
+                    <span class="part part3">768</span>
+                    <span class="part part4"></span>
+                </li>
+                <li onclick="selectOption(this)" data-value="3">
+                    <span class="part part1">768</span>
+                    <span class="part part2">:</span>
+                    <span class="part part3">512</span>
+                    <span class="part part4"></span>
+                </li>
+                <li onclick="selectOption(this)" data-value="4">
+                    <span class="part part1">640</span>
+                    <span class="part part2">:</span>
+                    <span class="part part3">640</span>
+                    <span class="part part4"></span>
+                </li>
+                <li onclick="selectOption(this)" data-value="5">
+                    <span class="part part1">1024</span>
+                    <span class="part part2">:</span>
+                    <span class="part part3">512</span>
+                    <span class="part part4 pro-badge">PRO</span>
+                </li>
+                <li onclick="selectOption(this)" data-value="6">
+                    <span class="part part1">512</span>
+                    <span class="part part2">:</span>
+                    <span class="part part3">1024</span>
+                    <span class="part part4 pro-badge">PRO</span>
+                </li>
+                <li onclick="selectOption(this)" data-value="7">
+                    <span class="part part1">1024</span>
+                    <span class="part part2">:</span>
+                    <span class="part part3">1024</span>
+                    <span class="part part4 pro-badge">PRO</span>
+                </li>
+            </ul>
+        </div>
+        <div class="custom-dropdown">
+            <label>Generation Type</label>
+            <div class="dropdown-btn2" onclick="toggleDropdown2()" style="color: #aaa;" data-value="image only">
+                <div style="display: flex; width: -webkit-fill-available;">
+                    <span class="part part2">Image only</span>
+                    <span class="part part4"></span>
+                </div>
+                <span>▼</span>
+            </div>
+            <ul class="dropdown-list2">
+                <li onclick="selectOption2(this)" data-value="image only">
+                    <span class="part part2">Image only</span>
+                    <span class="part part4"></span>
+                </li>
+                <li onclick="selectOption2(this)" data-value="image with caption">
+                    <span class="part part2">Image with caption</span>
+                    <span class="part part4 pro-badge">PRO</span>
+                </li>
+            </ul>
+        </div>
+        <div class="custom-tokens">
+            <label>Featured Image</label>
+            <div class="token-container">
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/fantasy.png" alt="Fantacy image">
+                        <span hidden>
+                            A grand elven city built into the trees, with glowing lanterns hanging from wooden bridges.
+                            Ethereal creatures like fairies and spirit deer wander among the luminescent flowers, while
+                            a massive crystal spire rises in the center, radiating magical energy.
+                        </span>
+                    </div>
+                    <span>Fantacy</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/abstract.png" alt="Abstract image">
+                        <span hidden>
+                            a human like figure in a world of abstract art where colour flows i the air. A swirling
+                            explosion of colours where the figure is stands out like a women in red dress in a room full
+                            of colourless people
+                        </span>
+                    </div>
+                    <span>Abstract</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/nature.png" alt="Nature image">
+                        <span hidden>
+                            A tranquil forest at sunrise, with golden light filtering through the misty treetops. A
+                            crystal-clear river flows gently, reflecting the colors of autumn leaves. Birds sing, and a
+                            deer pauses to drink from the water."
+                        </span>
+                    </div>
+                    <span>Nature</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/people.png" alt="People image">
+                        <span hidden>
+                            A portrait of an elderly woman with deep wrinkles, her wise eyes full of stories. She wears
+                            a colorful woven shawl, and her hands are clasped gently in her lap. The warm sunlight
+                            highlights the texture of her skin and the rich details of her clothing.
+                        </span>
+                    </div>
+                    <span>People</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/technology.png" alt="Technology image">
+                        <span hidden>
+                            A sleek humanoid robot with a semi-transparent body, revealing glowing circuits and a
+                            pulsing core. It stands in a futuristic city, interacting with holographic displays filled
+                            with data streams and AI-generated schematics.
+                        </span>
+                    </div>
+                    <span>Technology</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/animal.png" alt="Animals image">
+                        <span hidden>
+                            A majestic black panther with piercing golden eyes prowling through a dense jungle at night.
+                            Its fur glistens under the moonlight, and tiny glowing fireflies dance around it, creating
+                            an otherworldly atmosphere.
+                        </span>
+                    </div>
+                    <span>Animals</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/food.png" alt="Food image">
+                        <span hidden>
+                            A freshly baked croissant on a rustic wooden table, with layers of golden, flaky pastry
+                            visible. A cup of rich espresso sits nearby, with steam curling up in the morning light.
+                            Berries and honey drizzle complete the cozy breakfast scene.
+                        </span>
+                    </div>
+                    <span>Food</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/buildings.png" alt="Buildings image">
+                        <span hidden>
+                            An ancient, ivy-covered castle with towering spires, standing on the edge of a misty cliff.
+                            The sky is painted in shades of pink and purple at dusk, and lanterns flicker in the
+                            castle’s arched windows.
+                        </span>
+                    </div>
+                    <span>Buildings</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/objects.png" alt="Objects image">
+                        <span hidden>
+                            An ornate, golden pocket watch with intricate engravings, resting on an old leather-bound
+                            book. The hands of the watch glow faintly, hinting at a magical secret hidden within its
+                            ticking mechanism.
+                        </span>
+                    </div>
+                    <span>Objects</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/art.png" alt="Art image">
+                        <span hidden>
+                            A surreal painting of a woman’s face dissolving into a galaxy, with stars and nebulae
+                            forming her flowing hair. The colors shift fluidly, blending between warm oranges and cool
+                            purples in a dreamlike manner.
+                        </span>
+                    </div>
+                    <span>Art</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/futuristic.png" alt="Futuristic image">
+                        <span hidden>
+                            A sprawling futuristic metropolis at night, illuminated by neon holograms and floating
+                            vehicles gliding between towering skyscrapers. The streets below are lined with robotic
+                            vendors, and people in sleek, high-tech outfits walk past cybernetic enhancements glowing
+                            under the city lights. A massive digital billboard displays an AI-generated advertisement,
+                            blending seamlessly into the sky.
+                        </span>
+                    </div>
+                    <span>Futuristic</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/texture.png" alt="Textures image">
+                        <span hidden>
+                            A close-up of rough, cracked desert ground, with deep fissures forming intricate patterns.
+                            The texture is dry and rugged, showing the effects of time and nature.
+                        </span>
+                    </div>
+                    <span>Textures</span>
+                </div>
+                <div class="token" onclick="modalForFeatureImage(this)">
+                    <div class="token-img">
+                        <img src="image/fashion.png" alt="Fashion image">
+                        <span>
+                            A futuristic cyberpunk outfit featuring a sleek black jacket with glowing blue lines, paired
+                            with high-tech smart glasses. The model stands confidently against a neon-lit urban
+                            background.
+                        </span>
+                    </div>
+                    <span>Fashion</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="navbar">
+            <span class="toggle-sidebar" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></span>
+            <span class="logo">Image <span class="highlight">Generator</span></span>
+        </div>
+        <div class="chat-body">
+            <div class="chat-container" id="chat-container">
+
+                <!-- <div class="chat-message user">
+                    <div class="chat-bubble">a human is coding and the monitor is the sky. the clouds and the birds are
+                        forming the
+                        fonts and the whole world is been coded in this way. the human is creating a new world by coding
+                        in the sky
+                    </div>
+                </div>
+                <div class="chat-message assistant">
+                    <div class="img"><img src="18c26c87-9533-4c39-9a23-55d71a963ed5.png"
+                            style="width: 100%; height: 100%;"></div>
+                    <div class="buttons"><button><svg class="svg-inline--fa fa-download" aria-hidden="true"
+                                focusable="false" data-prefix="fas" data-icon="download" role="img"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                <path fill="currentColor"
+                                    d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z">
+                                </path>
+                            </svg></button><button><svg class="svg-inline--fa fa-reply" aria-hidden="true"
+                                focusable="false" data-prefix="fas" data-icon="reply" role="img"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                <path fill="currentColor"
+                                    d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z">
+                                </path>
+                            </svg></button></div>
+                </div>
+                <div class="chat-message user">
+                    <div class="chat-bubble">a human is creating a new earth from space by coding just like we design a
+                        website with
+                        html. he is making sure every detail is on point and the human is like a celestial being to the
+                        creatures of
+                        the new earth</div>
+                </div>
+                <div class="chat-message assistant">
+                    <div class="img"><img src="e46c3337-f495-400b-b357-06ee9aa9934d.png"
+                            style="width: 100%; height: 100%;"></div>
+                    <div class="buttons"><button><svg class="svg-inline--fa fa-download" aria-hidden="true"
+                                focusable="false" data-prefix="fas" data-icon="download" role="img"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                <path fill="currentColor"
+                                    d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z">
+                                </path>
+                            </svg></button><button><svg class="svg-inline--fa fa-reply" aria-hidden="true"
+                                focusable="false" data-prefix="fas" data-icon="reply" role="img"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                <path fill="currentColor"
+                                    d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z">
+                                </path>
+                            </svg></button></div>
+                </div>
+                <div class="chat-message user">
+                    <div class="chat-bubble">a hot and sexy dat in swim suit</div>
+                </div>
+                <div class="chat-message assistant">
+                    <div class="img"><img src="49760472-2c0b-4b4b-9175-4ff1e8550fb4.png"
+                            style="width: 100%; height: 100%;"></div>
+                    <div class="buttons"><button><svg class="svg-inline--fa fa-download" aria-hidden="true"
+                                focusable="false" data-prefix="fas" data-icon="download" role="img"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                <path fill="currentColor"
+                                    d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z">
+                                </path>
+                            </svg></button><button><svg class="svg-inline--fa fa-reply" aria-hidden="true"
+                                focusable="false" data-prefix="fas" data-icon="reply" role="img"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                <path fill="currentColor"
+                                    d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z">
+                                </path>
+                            </svg></button></div>
+                </div> -->
+
+            </div>
+            <div class="chat-input">
+                <button id="uploadBtn"><i class="fa-solid fa-plus"></i></button>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+                <div class="prompt-container">
+                    <div class="prompt-img">
+                        <div>
+                            <img id="previewImage" alt="Selected Image" src="">
+                        </div>
+                        <i class="fa-solid fa-circle-xmark attached-img-btn" onclick="closeAtt()"></i>
+                    </div>
+                    <textarea id="prompt" class="prompt" placeholder="Type your prompt..."></textarea>
+                </div>
+                <button onclick="sendPrompt()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal">
+        <div class="modal-content">
+            <!-- <span class="close">&times;</span> -->
+            <img id="output" src="image/fantasy.png" alt="Generated Image">
+            <div class="copy-box" onclick="copyText(this)">
+                <span class="copy-text">
+                    Prompt of the featured images to copy
+                </span>
+                <span class="copy-tooltip">Click to copy</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textarea = document.getElementById('prompt');
+
+        textarea.addEventListener('input', function () {
+            textarea.style.height = '20px';
+
+            const newHeight = Math.min(Math.max(textarea.scrollHeight - 20, 20), 80);
+            textarea.style.height = newHeight + 'px';
+
+            if (textarea.value.length === 0) {
+                textarea.style.height = '20px';
+            }
+        });
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("hidden");
+        }
+
+        function scrollToBottom() {
+            let chatContainer = document.getElementById("chat-container");
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 100);
+        }
+
+        function openModal(imageSrc) {
+            let modal = document.querySelector(".modal");
+            let outputImage = document.getElementById("output");
+
+            outputImage.src = imageSrc;
+            outputImage.style.objectFit = "cover";
+            modal.style.display = "flex";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let modal = document.querySelector(".modal");
+
+            // Close modal when clicking outside the image
+            modal.addEventListener("click", function (event) {
+                if (event.target === modal) {
+                    let modal = document.querySelector(".modal");
+                    let outputImage = document.getElementById("output");
+
+                    modal.style.display = "none";
+                    outputImage.src = "";
+                    document.querySelector(".copy-box").style.display = "none";
+                }
+            });
+        });
+    </script>
+    <script>
+        function sendPrompt() {
+            let prompt = document.getElementById("prompt").value;
+            let attImg = document.getElementById("previewImage").src;
+
+            if (!prompt.trim() && !(attImg && attImg !== window.location.href)) {
+                return;
+            } else if (!prompt.trim() && attImg && attImg !== window.location.href) {
+                prompt = "Work on this image";
+            }
+
+            createUserMessage(prompt, attImg);
+            createAssistantMessage(prompt);
+
+            document.getElementById("prompt").value = "";
+            document.getElementById("prompt").style.height = "20px";
+            closeAtt();
+            scrollToBottom();
+        }
+
+        function createUserMessage(prompt, attImg) {
+            let chatContainer = document.getElementById("chat-container");
+
+            let userMessage = document.createElement("div");
+            userMessage.classList.add("chat-message", "user");
+
+            let userBubble = document.createElement("div");
+            userBubble.classList.add("chat-bubble");
+
+            if (attImg && attImg !== window.location.href) {
+                let img = document.createElement("img");
+                img.src = attImg;
+                img.style.height = "100%";
+                img.style.cursor = "pointer";
+                img.addEventListener("click", function () {
+                    openModal(attImg);
+                });
+
+                let imgDiv = document.createElement("div");
+                imgDiv.classList.add("att-img");
+                imgDiv.appendChild(img);
+
+                userMessage.appendChild(imgDiv);
+                userBubble.style.borderRadius = "10px 5px 10px 10px";
+            }
+
+            userBubble.innerText = prompt;
+            userMessage.appendChild(userBubble);
+            chatContainer.appendChild(userMessage);
+        }
+
+        function createAssistantMessage(prompt) {
+            let chatContainer = document.getElementById("chat-container");
+
+            let assistantMessage = document.createElement("div");
+            assistantMessage.classList.add("chat-message", "assistant");
+
+            let img = document.createElement("img");
+            img.src = "https://cdn.pixabay.com/animation/2022/10/11/03/16/03-16-39-160_512.gif";
+            img.style.width = "45px";
+            img.style.height = "45px";
+            img.style.cursor = "pointer";
+
+            let imgDiv = document.createElement("div");
+            imgDiv.classList.add("img");
+            imgDiv.appendChild(img);
+
+            let buttonsDiv = document.createElement("div");
+            buttonsDiv.classList.add("buttons");
+
+            let btn1 = document.createElement("button");
+            btn1.innerHTML = '<i class="fa-solid fa-download"></i>';
+            let btn2 = document.createElement("button");
+            btn2.innerHTML = '<i class="fa-solid fa-reply"></i>';
+
+            buttonsDiv.appendChild(btn1);
+            buttonsDiv.appendChild(btn2);
+
+            assistantMessage.appendChild(imgDiv);
+            assistantMessage.appendChild(buttonsDiv);
+            chatContainer.appendChild(assistantMessage);
+
+            img.addEventListener("click", function () {
+                openModal(img.src);
+            });
+
+            btn1.addEventListener("click", function () {
+                let link = document.createElement("a");
+                link.href = img.src;
+                link.download = "generated_image.png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            btn2.addEventListener("click", function () {
+                const image = document.getElementById("previewImage");
+                image.src = img.src;
+                document.querySelector('.prompt-container').style.borderRadius = "10px 10px 20px 20px";
+                document.querySelector('.prompt-img').style.display = "flex";
+            });
+
+            generateImage(img, prompt);
+        }
+
+        async function generateImage(outputImg, prompt) {
+
+            let response = await fetch("https://aa70-34-91-242-119.ngrok-free.app/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    prompt: prompt
+                }),
+            });
+
+            let blob = await response.blob();
+            outputImg.src = URL.createObjectURL(blob);
+            outputImg.style.width = "100%";
+            outputImg.style.height = "100%";
+        }
+    </script>
+    <script>
+        document.getElementById("uploadBtn").addEventListener("click", function () {
+            document.getElementById("fileInput").click();
+        });
+
+        document.getElementById("fileInput").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            console.log(file.name);
+
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const img = document.getElementById("previewImage");
+                    img.src = e.target.result;
+                    document.querySelector('.prompt-container').style.borderRadius = "10px 10px 20px 20px";
+                    document.querySelector('.prompt-img').style.display = "flex";
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please select a valid image file!");
+            }
+
+            event.target.value = "";
+        });
+
+        function closeAtt() {
+            const img = document.getElementById("previewImage");
+            img.src = '';
+            document.querySelector('.prompt-img').style.display = "none";
+            document.querySelector('.prompt-container').style.borderRadius = "20px";
+        }
+    </script>
+    <script>
+        function modalForFeatureImage(element) {
+            let img = element.querySelector('.token-img img');
+            let modalSpan = document.querySelector(".copy-text");
+            let outputImage = document.getElementById("output");
+            let span = element.querySelector('.token-img span');
+            console.log(span.innerText);
+
+            outputImage.src = img.src;
+            outputImage.style.objectFit = "cover";
+            modalSpan.innerText = span.innerText.trim().replace(/\n/g, " ");
+
+            document.querySelector(".modal").style.display = "flex";
+            document.querySelector(".copy-box").style.display = "flex";
+        }
+
+        function toggleDropdown() {
+            document.querySelector(".dropdown-list").classList.toggle("show");
+        }
+
+        function toggleDropdown2() {
+            document.querySelector(".dropdown-list2").classList.toggle("show");
+        }
+
+        function selectOption(element) {
+            let selectedValue = document.querySelector('.dropdown-btn div');
+            selectedValue.innerHTML = element.innerHTML;
+            document.querySelector('.dropdown-btn').setAttribute('data-value', element.getAttribute('data-value'));
+            document.querySelector(".dropdown-list").classList.remove("show");
+        }
+
+        function selectOption2(element) {
+            let selectedValue = document.querySelector('.dropdown-btn2 div');
+            selectedValue.innerHTML = element.innerHTML;
+            document.querySelector('.dropdown-btn2').setAttribute('data-value', element.getAttribute('data-value'));
+            document.querySelector(".dropdown-list2").classList.remove("show");
+        }
+
+        function getAspectRatio() {
+            return document.querySelector('.dropdown-btn').getAttribute('data-value');
+        }
+
+        function getGenType() {
+            return document.querySelector('.dropdown-btn2').getAttribute('data-value');
+        }
+
+        document.addEventListener("click", function (event) {
+            if (!document.querySelector(".custom-dropdown").contains(event.target)) {
+                document.querySelector(".dropdown-list").classList.remove("show");
+            }
+        });
+
+        function copyText(element) {
+            let text = element.querySelector('.copy-text').textContent.trim();
+            navigator.clipboard.writeText(text).then(() => {
+                let tooltip = element.querySelector(".copy-tooltip");
+                tooltip.textContent = "Copied!";
+                setTimeout(() => tooltip.textContent = "Click to copy", 1500);
+            });
+        }
+
+
+    </script>
+</body>
+
+</html>
