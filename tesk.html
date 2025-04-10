@@ -360,6 +360,7 @@
             display: flex;
             flex-direction: row;
             gap: 15px;
+            margin: 0 0 0;
         }
 
         .chat-message.assistant .buttons button {
@@ -410,7 +411,7 @@
         .att-img {
             height: 100px;
             /* margin: 0 5px; */
-            border-radius: 10px 10px 5px 10px;
+            border-radius: 10px;
             overflow: hidden;
         }
     </style>
@@ -479,7 +480,7 @@
 </head>
 
 <body>
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar hidden" id="sidebar">
         <h3>Image Formate</h3>
         <div class="custom-dropdown">
             <label>Aspect Ratio</label>
@@ -549,6 +550,10 @@
             <ul class="dropdown-list2">
                 <li onclick="selectOption2(this)" data-value="image only">
                     <span class="part part2">Image only</span>
+                    <span class="part part4"></span>
+                </li>
+                <li onclick="selectOption2(this)" data-value="caption only">
+                    <span class="part part2">Caption only</span>
                     <span class="part part4"></span>
                 </li>
                 <li onclick="selectOption2(this)" data-value="image with caption">
@@ -867,18 +872,46 @@
         });
     </script>
     <script>
+        function generationClassification() {
+            let genType = getGenType();
+            let prompt = document.getElementById("prompt").value;
+            let attImg = document.getElementById("previewImage").src;
+
+            if (!(attImg && attImg !== window.location.href) && !prompt.trim()) {
+                return 0;
+            } else if (genType == "image only") {
+                if (prompt.trim()) {
+                    return 1;
+                } else {
+                    return 4;
+                }
+            } else if (genType == "caption only") {
+                if (attImg && attImg !== window.location.href) {
+                    return 2;
+                } else {
+                    return 4;
+                }
+            } else if (genType == "image with caption") {
+                if (attImg && attImg !== window.location.href && !prompt.trim()) {
+                    return 4;
+                } else {
+                    return 3;
+                }
+            }
+        }
+    </script>
+    <script>
         function sendPrompt() {
             let prompt = document.getElementById("prompt").value;
             let attImg = document.getElementById("previewImage").src;
 
-            if (!prompt.trim() && !(attImg && attImg !== window.location.href)) {
+            let genMode = generationClassification();
+            if (genMode == 0) {
                 return;
-            } else if (!prompt.trim() && attImg && attImg !== window.location.href) {
-                prompt = "Work on this image";
             }
 
-            createUserMessage(prompt, attImg);
-            createAssistantMessage(prompt);
+            createUserMessage(prompt, attImg, genMode);
+            createAssistantMessage(prompt, attImg, genMode);
 
             document.getElementById("prompt").value = "";
             document.getElementById("prompt").style.height = "20px";
@@ -886,7 +919,7 @@
             scrollToBottom();
         }
 
-        function createUserMessage(prompt, attImg) {
+        function createUserMessage(prompt, attImg, genMode) {
             let chatContainer = document.getElementById("chat-container");
 
             let userMessage = document.createElement("div");
@@ -909,15 +942,17 @@
                 imgDiv.appendChild(img);
 
                 userMessage.appendChild(imgDiv);
-                userBubble.style.borderRadius = "10px 5px 10px 10px";
+                // userBubble.style.borderRadius = "10px 5px 10px 10px";
             }
 
             userBubble.innerText = prompt;
-            userMessage.appendChild(userBubble);
+            if (prompt.trim()) {
+                userMessage.appendChild(userBubble);
+            }
             chatContainer.appendChild(userMessage);
         }
 
-        function createAssistantMessage(prompt) {
+        function createAssistantMessage(prompt, attImg, genMode) {
             let chatContainer = document.getElementById("chat-container");
 
             let assistantMessage = document.createElement("div");
@@ -941,12 +976,32 @@
             let btn2 = document.createElement("button");
             btn2.innerHTML = '<i class="fa-solid fa-reply"></i>';
 
+            let userBubble = document.createElement("div");
+            userBubble.classList.add("chat-bubble");
+            userBubble.style.display = "none";
+
+            let cover = document.createElement("div");
+            cover.classList.add("cover");
+            cover.style.display = "flex";
+            cover.appendChild(userBubble);
+
             buttonsDiv.appendChild(btn1);
             buttonsDiv.appendChild(btn2);
 
             assistantMessage.appendChild(imgDiv);
             assistantMessage.appendChild(buttonsDiv);
-            chatContainer.appendChild(assistantMessage);
+            if (genMode === 4) {
+                let text = "Based on you settings plese provide a prompt or attach an image <br> <br>" + 
+                    "<li>Forimage only or image with caption you must provide a prompt (attached image is optional)</li>" + 
+                    "<li>For caption only you must attach an image (prompt is optional)</li>";
+                errorbubble(userBubble, text);
+                chatContainer.appendChild(cover);
+                return;
+            }
+            if (genMode === 1 || genMode === 3) {
+                chatContainer.appendChild(assistantMessage);
+            }
+            chatContainer.appendChild(cover);
 
             img.addEventListener("click", function () {
                 openModal(img.src);
@@ -968,23 +1023,57 @@
                 document.querySelector('.prompt-img').style.display = "flex";
             });
 
-            generateImage(img, prompt);
+            generateImage(img, prompt, attImg, userBubble, genMode);
         }
 
-        async function generateImage(outputImg, prompt) {
+        async function generateImage(outputImg, prompt, attImg, userBubble, genMode) {
+            let api_url = "https://b019-34-34-98-90.ngrok-free.app/generate";
 
-            let response = await fetch("https://aa70-34-91-242-119.ngrok-free.app/generate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    prompt: prompt
-                }),
-            });
+            const res = await fetch(attImg);
+            const attblob = await res.blob();
+            const file = new File([attblob], "attached.png", { type: attblob.type });
 
-            let blob = await response.blob();
-            outputImg.src = URL.createObjectURL(blob);
+            let [width, height] = getAspectRatio();
+            let genType = getGenType();
+            let response = null;
+
+            let formData = new FormData();
+            formData.append("prompt", prompt);
+            formData.append("height", height);
+            formData.append("width", width);
+            formData.append("mode", genMode);
+
+            if (!(attImg && attImg !== window.location.href)) {
+                response = await fetch(api_url, {
+                    method: "POST",
+                    body: formData
+                });
+            } else if (attImg && attImg !== window.location.href) {
+                formData.append("image", file); // append file to key "image"
+
+                response = await fetch(api_url, {
+                    method: "POST",
+                    body: formData
+                });
+            }
+
+            let results = await response.json();
+            let blob = results.image;
+
+            outputImg.src = `data:image/png;base64,${blob}`;
             outputImg.style.width = "100%";
             outputImg.style.height = "100%";
+
+            console.log(genMode);
+            if (genMode === 2 || genMode === 3) {
+                errorbubble(userBubble, results.text);
+            }
+        }
+
+        function errorbubble(userBubble, text) {
+            console.log(text);
+            userBubble.innerHTML = text;
+            userBubble.style.display = "block";
         }
     </script>
     <script>
@@ -1050,6 +1139,8 @@
             selectedValue.innerHTML = element.innerHTML;
             document.querySelector('.dropdown-btn').setAttribute('data-value', element.getAttribute('data-value'));
             document.querySelector(".dropdown-list").classList.remove("show");
+
+            console.log(document.querySelector('.dropdown-btn').getAttribute('data-value'));
         }
 
         function selectOption2(element) {
@@ -1057,13 +1148,44 @@
             selectedValue.innerHTML = element.innerHTML;
             document.querySelector('.dropdown-btn2').setAttribute('data-value', element.getAttribute('data-value'));
             document.querySelector(".dropdown-list2").classList.remove("show");
+
+            console.log(document.querySelector('.dropdown-btn2').getAttribute('data-value'));
         }
 
         function getAspectRatio() {
-            return document.querySelector('.dropdown-btn').getAttribute('data-value');
+            // console.log(document.querySelector('.dropdown-btn').getAttribute('data-value'));
+            let aspectRatio = document.querySelector('.dropdown-btn').getAttribute('data-value');
+            if (aspectRatio == 1) {
+                width = 512;
+                height = 512;
+            } else if (aspectRatio == 2) {
+                width = 512;
+                height = 768;
+            } else if (aspectRatio == 3) {
+                width = 768;
+                height = 512;
+            } else if (aspectRatio == 4) {
+                width = 640;
+                height = 640;
+            } else if (aspectRatio == 5) {
+                width = 1024;
+                height = 512;
+            } else if (aspectRatio == 6) {
+                width = 512;
+                height = 1024;
+            } else if (aspectRatio == 7) {
+                width = 1024;
+                height = 1024;
+            }
+            else {
+                height = 512;
+                width = 512;
+            }
+            return [width, height];
         }
 
         function getGenType() {
+            // console.log(document.querySelector('.dropdown-btn2').getAttribute('data-value'));
             return document.querySelector('.dropdown-btn2').getAttribute('data-value');
         }
 
