@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Generator</title>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/brands.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/solid.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/v4-shims.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
+
     <!-- main css -->
     <style>
         body {
@@ -289,7 +292,7 @@
             transition: .3s;
         }
 
-        .chat-input button:hover {
+        .chat-input button:not(.magic-btn):hover {
             background: #333;
         }
 
@@ -346,6 +349,7 @@
             border-radius: 20px 0 0 20px;
             outline: 0;
             margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .textbox-container button {
@@ -357,7 +361,7 @@
             border: none;
             margin: 0;
             border-radius: 0 20px 20px 0;
-            transition: .3s;
+            transition: all .3s ease;
             font-size: 11px;
             padding: 5px;
             display: flex;
@@ -365,30 +369,10 @@
             padding-top: 15px;
         }
 
-        .textbox-container button i {
-            display: inline-block;
-            font-size: 20px;
-            background-image: none;
-            color: #222;
-            transition: all 0.3s ease;
-        }
-
-        .textbox-container button:hover i {
-            background-image: linear-gradient(45deg, #4132de, #cf1cfb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* .textbox-container button:hover {
+        .textbox-container button:hover {
             background: #222;
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            -webkit-text-fill-color: transparent;
-            background-image: linear-gradient(45deg, #f9d29d, #8b5e3c);
-        } */
+            color: #fff;
+        }
     </style>
     <!-- chat msg css -->
     <style>
@@ -768,76 +752,6 @@
         </div>
         <div class="chat-body">
             <div class="chat-container" id="chat-container">
-
-                <div class="chat-message user">
-                    <div class="chat-bubble">a human is coding and the monitor is the sky. the clouds and the birds are
-                        forming the
-                        fonts and the whole world is been coded in this way. the human is creating a new world by coding
-                        in the sky
-                    </div>
-                </div>
-                <div class="chat-message assistant">
-                    <div class="img"><img src="18c26c87-9533-4c39-9a23-55d71a963ed5.png"
-                            style="width: 100%; height: 100%;"></div>
-                    <div class="buttons"><button><svg class="svg-inline--fa fa-download" aria-hidden="true"
-                                focusable="false" data-prefix="fas" data-icon="download" role="img"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
-                                <path fill="currentColor"
-                                    d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z">
-                                </path>
-                            </svg></button><button><svg class="svg-inline--fa fa-reply" aria-hidden="true"
-                                focusable="false" data-prefix="fas" data-icon="reply" role="img"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
-                                <path fill="currentColor"
-                                    d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z">
-                                </path>
-                            </svg></button></div>
-                </div>
-                <div class="chat-message user">
-                    <div class="chat-bubble">a human is creating a new earth from space by coding just like we design a
-                        website with
-                        html. he is making sure every detail is on point and the human is like a celestial being to the
-                        creatures of
-                        the new earth</div>
-                </div>
-                <div class="chat-message assistant">
-                    <div class="img"><img src="e46c3337-f495-400b-b357-06ee9aa9934d.png"
-                            style="width: 100%; height: 100%;"></div>
-                    <div class="buttons"><button><svg class="svg-inline--fa fa-download" aria-hidden="true"
-                                focusable="false" data-prefix="fas" data-icon="download" role="img"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
-                                <path fill="currentColor"
-                                    d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z">
-                                </path>
-                            </svg></button><button><svg class="svg-inline--fa fa-reply" aria-hidden="true"
-                                focusable="false" data-prefix="fas" data-icon="reply" role="img"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
-                                <path fill="currentColor"
-                                    d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z">
-                                </path>
-                            </svg></button></div>
-                </div>
-                <div class="chat-message user">
-                    <div class="chat-bubble">a hot and sexy dat in swim suit</div>
-                </div>
-                <div class="chat-message assistant">
-                    <div class="img"><img src="49760472-2c0b-4b4b-9175-4ff1e8550fb4.png"
-                            style="width: 100%; height: 100%;"></div>
-                    <div class="buttons"><button><svg class="svg-inline--fa fa-download" aria-hidden="true"
-                                focusable="false" data-prefix="fas" data-icon="download" role="img"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
-                                <path fill="currentColor"
-                                    d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z">
-                                </path>
-                            </svg></button><button><svg class="svg-inline--fa fa-reply" aria-hidden="true"
-                                focusable="false" data-prefix="fas" data-icon="reply" role="img"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
-                                <path fill="currentColor"
-                                    d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z">
-                                </path>
-                            </svg></button></div>
-                </div>
-
             </div>
             <div class="chat-input">
                 <button id="uploadBtn"><i class="fa-solid fa-image"></i></button>
@@ -851,7 +765,9 @@
                     </div>
                     <div class="textbox-container">
                         <textarea id="prompt" class="prompt" placeholder="Type your prompt..."></textarea>
-                        <button onclick="betterPrompt()"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                        <button class="magic-btn" onclick="betterPrompt()">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </button>
                     </div>
                 </div>
                 <button onclick="sendPrompt()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -1261,7 +1177,7 @@
 
     </script>
     <script>
-        const prompt = [
+        const promptExp = [
             "A grand elven city built into the trees, with glowing lanterns hanging from wooden bridges. Ethereal creatures like fairies and spirit deer wander among the luminescent flowers, while a massive crystal spire rises in the center, radiating magical energy.",
             "A human like figure in a world of abstract art where colour flows i the air. A swirling explosion of colours where the figure is stands out like a women in red dress in a room full of colourless people",
             "A tranquil forest at sunrise, with golden light filtering through the misty treetops. A crystal-clear river flows gently, reflecting the colors of autumn leaves. Birds sing, and a deer pauses to drink from the water.",
@@ -1280,8 +1196,8 @@
         async function betterPrompt() {
             let promptText = document.getElementById("prompt");
             if (promptText.value.trim() === "") {
-                let randomIndex = Math.floor(Math.random() * prompt.length);
-                promptText.value = prompt[randomIndex];
+                let randomIndex = Math.floor(Math.random() * promptExp.length);
+                promptText.value = promptExp[randomIndex];
                 textarea.style.height = '20px';
 
                 const newHeight = Math.min(Math.max(textarea.scrollHeight - 20, 20), 80);
